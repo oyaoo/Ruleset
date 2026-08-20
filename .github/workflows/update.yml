@@ -1,0 +1,48 @@
+name: Update Tailscale DERP rules
+
+on:
+  workflow_dispatch:
+
+  schedule:
+    # 每 6 小时运行一次
+    - cron: "17 */6 * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Generate Tailscale DERP lists
+        run: python scripts/generate.py
+
+      - name: Commit changes
+        shell: bash
+        run: |
+          if git diff --quiet -- \
+            tailscale-derp-domain.list \
+            tailscale-derp-ip.list; then
+
+            echo "No DERP changes."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add \
+            tailscale-derp-domain.list \
+            tailscale-derp-ip.list
+
+          git commit -m "Update Tailscale DERP lists"
+          git push
