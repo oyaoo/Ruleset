@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
   schedule:
-    # 每 6 小时运行一次
+    # 每天运行一次
     - cron: "17 3 * * *"
 
 permissions:
