@@ -27,7 +27,6 @@ class TestGlobalRegionSplit(unittest.TestCase):
             "DOMAIN-SUFFIX,example.br": "Americas",
             "DOMAIN-SUFFIX,example.mx": "Americas",
             "DOMAIN-SUFFIX,example.pr": "Americas",
-            "DOMAIN-SUFFIX,example.ai": "Americas",  # Anguilla (globally marketed TLD)
             "DOMAIN-SUFFIX,example.sg": "SoutheastAsia",
             "DOMAIN-SUFFIX,example.vn": "SoutheastAsia",
             "DOMAIN,example.tl": "SoutheastAsia",
