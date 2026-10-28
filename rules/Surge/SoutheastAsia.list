@@ -2,7 +2,6 @@
 # Category: SoutheastAsia | Rules: 368
 # Source: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Global/Global_All_No_Resolve.list
 # Classification: country-code domain TLD only; not geo-IP.
-# Policy targets (suggested): Japan=JP, Americas=US, SoutheastAsia=SG, Europe=DE, Global_All_No_Resolve=HK.
 DOMAIN-SUFFIX,9anime.id
 DOMAIN-SUFFIX,abank.com.mm
 DOMAIN-SUFFIX,aboutamazon.sg

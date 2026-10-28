@@ -1,8 +1,7 @@
 # Generated from blackmatrix7/ios_rule_script (Clash)
-# Category: Global_All_No_Resolve | Rules: 25596
+# Category: Global_Remaining | Rules: 25596
 # Source: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Global/Global_Classical_No_Resolve.yaml
 # Classification: country-code domain TLD only; not geo-IP.
-# Policy targets (suggested): Japan=JP, Americas=US, SoutheastAsia=SG, Europe=DE, Global_All_No_Resolve=HK.
 payload:
   - 'DOMAIN,1password.drift.click'
   - 'DOMAIN,adobeereg.com'
