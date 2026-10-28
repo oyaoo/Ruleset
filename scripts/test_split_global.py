@@ -43,6 +43,7 @@ class TestGlobalRegionSplit(unittest.TestCase):
             "DOMAIN-SUFFIX,example.hk": None,
             "DOMAIN-SUFFIX,example.cn": None,
             "DOMAIN-SUFFIX,example.io": None,
+            "DOMAIN-SUFFIX,example.ai": None,
             "DOMAIN-KEYWORD,example.jp": None,
             "IP-CIDR,1.2.3.0/24,no-resolve": None,
             "PROCESS-NAME,AnyApp": None,
@@ -96,6 +97,8 @@ class TestGlobalRegionSplit(unittest.TestCase):
             (clash_dir / "DE.yaml").write_text("old", encoding="utf-8")
             (clash_dir / "EU.yaml").write_text("old", encoding="utf-8")
             (surge_dir / "EU.list").write_text("old", encoding="utf-8")
+            (surge_dir / "Global_All_No_Resolve.list").write_text("old", encoding="utf-8")
+            (clash_dir / "Global_All_No_Resolve.yaml").write_text("old", encoding="utf-8")
             c1 = generate(surge, surge_dir, "Surge")
             c2 = generate(clash, clash_dir, "Clash")
             self.assertEqual(c1, {
@@ -118,15 +121,21 @@ class TestGlobalRegionSplit(unittest.TestCase):
             self.assertEqual(read_surge(surge_dir / "Europe.list"), ["DOMAIN-SUFFIX,site.de", "DOMAIN-SUFFIX,site.uk"])
             self.assertEqual(read_clash(clash_dir / "Europe.yaml"), ["DOMAIN-SUFFIX,site.eu"])
             self.assertEqual(read_clash(clash_dir / "Americas.yaml"), ["DOMAIN-SUFFIX,site.ca"])
-            self.assertEqual(read_surge(surge_dir / "Global_All_No_Resolve.list"), [
+            self.assertEqual(read_surge(surge_dir / "Global_Remaining.list"), [
                 "DOMAIN-SUFFIX,site.com",
                 "DOMAIN-KEYWORD,test", "USER-AGENT,SomeUserAgent*",
             ])
-            self.assertEqual(read_clash(clash_dir / "Global_All_No_Resolve.yaml"), [
+            self.assertEqual(read_clash(clash_dir / "Global_Remaining.yaml"), [
                 "DOMAIN-SUFFIX,site.com", "IP-CIDR,8.8.8.0/24,no-resolve",
             ])
             self.assertEqual(sum(c1.values()), len(set(read_surge(surge))))
             self.assertEqual(sum(c2.values()), len(set(read_clash(clash))))
+
+    def test_generated_headers_have_no_policy_suggestion(self):
+        for format_name in ("Surge", "Clash"):
+            content = file_content(format_name, "Europe", ["DOMAIN-SUFFIX,example.de"])
+            self.assertNotIn("Policy targets", content)
+            self.assertNotIn("Global_Remaining=HK", content)
 
     def test_empty_clash_region_is_valid_yaml(self):
         import yaml

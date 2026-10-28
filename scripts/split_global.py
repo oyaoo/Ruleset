@@ -2,7 +2,7 @@
 """Split Surge and Clash Global rules independently into four regions plus remainder.
 
 Only DOMAIN and DOMAIN-SUFFIX rules can be classified by country-code TLD.
-Everything else remains in Global_All_No_Resolve, so no source rule is lost.
+Everything else remains in Global_Remaining, so no source rule is lost.
 """
 
 from __future__ import annotations
@@ -45,7 +45,7 @@ REGION_CODES = {
 
 # The project's five output files per format, always emitted in this order.
 REGION_ORDER = ("Japan", "Americas", "SoutheastAsia", "Europe")
-REMAINDER_NAME = "Global_All_No_Resolve"
+REMAINDER_NAME = "Global_Remaining"
 
 # .uk is the standard UK ccTLD; .gb also maps to the Europe category.
 TLD_ALIASES = {"uk": "GB"}
@@ -124,8 +124,6 @@ def file_content(format_name: str, category: str, rules: list[str]) -> str:
         f"# Category: {category} | Rules: {len(rules)}\n"
         f"# Source: {SOURCE_URLS[format_name]}\n"
         "# Classification: country-code domain TLD only; not geo-IP.\n"
-        "# Policy targets (suggested): Japan=JP, Americas=US, "
-        "SoutheastAsia=SG, Europe=DE, Global_All_No_Resolve=HK.\n"
     )
     if format_name == "Surge":
         return header + "\n".join(rules) + "\n"
