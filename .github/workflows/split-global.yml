@@ -1,0 +1,82 @@
+
+name: Split Global Rules by Region
+
+on:
+  workflow_dispatch:
+  schedule:
+    # 每天北京时间 06:00
+    - cron: '0 6 * * *'
+      timezone: 'Asia/Shanghai'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: split-global-rules
+  cancel-in-progress: false
+
+jobs:
+  split:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: python -m pip install 'PyYAML>=6.0,<7'
+
+      - name: Run tests
+        run: |
+          python -m unittest discover \
+            -s scripts \
+            -p 'test_split_global.py' \
+            -v
+
+      - name: Download upstream rules
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          mkdir -p .download
+
+          curl -fLsS --retry 4 --retry-delay 3 \
+            'https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Global/Global_All_No_Resolve.list' \
+            -o .download/surge.list
+
+          curl -fLsS --retry 4 --retry-delay 3 \
+            'https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Global/Global_Classical_No_Resolve.yaml' \
+            -o .download/clash.yaml
+
+          test -s .download/surge.list
+          test -s .download/clash.yaml
+
+      - name: Split Surge and Clash
+        run: |
+          python scripts/split_global.py \
+            --surge-source .download/surge.list \
+            --clash-source .download/clash.yaml \
+            --output-root rules
+
+      - name: Commit and push changes
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          git config user.name 'github-actions[bot]'
+          git config user.email \
+            '41898282+github-actions[bot]@users.noreply.github.com'
+
+          git add -A -- rules/Surge rules/Clash
+
+          if git diff --cached --quiet; then
+            echo 'No changes.'
+            exit 0
+          fi
+
+          git commit -m 'chore: update region-split rules'
+          git push
