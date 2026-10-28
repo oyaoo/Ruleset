@@ -4,7 +4,6 @@ name: Split Global Rules by Region
 on:
   workflow_dispatch:
   schedule:
-    # 每天北京时间 06:00
     - cron: '32 5 * * *'
       timezone: 'Asia/Shanghai'
 
