@@ -5,7 +5,8 @@ on:
 
   schedule:
     # 每天运行一次
-    - cron: "17 3 * * *"
+    - cron: "17 5 * * *"
+      timezone: 'Asia/Shanghai'
 
 permissions:
   contents: write
